@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+anthropic
+langchain
+langchain_classic
+langchain-openai
+langchain-community
+httpx
+python-multipart
+pdfplumber
+sentence-transformers
+scikit-learn
+python-dotenv
+requests

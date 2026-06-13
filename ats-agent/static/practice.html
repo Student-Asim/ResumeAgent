@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Practice</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 2rem; }
+  h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; color: #f8fafc; }
+  .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: 0.4rem 1rem; border-radius: 6px; border: 1px solid #334155;
+         background: transparent; color: #94a3b8; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+  .tab.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+  .question { font-size: 1.05rem; font-weight: 500; color: #f1f5f9; margin-bottom: 1rem; line-height: 1.5; }
+  .meta { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .badge { padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+  .badge-topic { background: #1e3a5f; color: #60a5fa; }
+  .badge-easy { background: #14532d; color: #4ade80; }
+  .badge-medium { background: #713f12; color: #fbbf24; }
+  .badge-hard { background: #450a0a; color: #f87171; }
+  .badge-behavioral { background: #2e1065; color: #c084fc; }
+  .reveal-btn { background: #334155; border: none; color: #94a3b8; padding: 0.5rem 1rem;
+                border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+  .reveal-btn:hover { background: #475569; color: #e2e8f0; }
+  .answer { display: none; margin-top: 1rem; padding: 1rem; background: #0f1a2e;
+            border-left: 3px solid #6366f1; border-radius: 0 8px 8px 0; font-size: 0.9rem;
+            color: #cbd5e1; line-height: 1.6; }
+  .answer.show { display: block; }
+  .hint { font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; font-style: italic; }
+  .timer { font-size: 2rem; font-weight: 700; color: #6366f1; text-align: center; margin: 1rem 0; }
+  .timer-controls { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; }
+  .timer-btn { padding: 0.4rem 1rem; border-radius: 6px; border: 1px solid #334155;
+               background: #1e2535; color: #e2e8f0; cursor: pointer; font-size: 0.85rem; }
+  .rating { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .rate-btn { padding: 0.3rem 0.8rem; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem; }
+  .rate-1 { background: #450a0a; color: #f87171; }
+  .rate-2 { background: #713f12; color: #fbbf24; }
+  .rate-3 { background: #14532d; color: #4ade80; }
+  .rate-btn.selected { outline: 2px solid #fff; }
+  .section-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+                   letter-spacing: 0.08em; color: #64748b; margin-bottom: 0.75rem; }
+  .talking-point { padding: 0.6rem 1rem; background: #1e2535; border-radius: 8px;
+                   border-left: 3px solid #10b981; margin-bottom: 0.5rem; font-size: 0.9rem; color: #d1fae5; }
+  .red-flag { padding: 0.6rem 1rem; background: #1e2535; border-radius: 8px;
+              border-left: 3px solid #ef4444; margin-bottom: 0.5rem; font-size: 0.9rem; color: #fecaca; }
+  .ask-q { padding: 0.6rem 1rem; background: #1e2535; border-radius: 8px;
+           border-left: 3px solid #f59e0b; margin-bottom: 0.5rem; font-size: 0.9rem; color: #fef3c7; }
+  .progress { background: #1e2535; border-radius: 999px; height: 6px; margin-bottom: 1.5rem; }
+  .progress-bar { background: #6366f1; height: 6px; border-radius: 999px; transition: width 0.3s; }
+  .empty { color: #64748b; font-size: 0.9rem; text-align: center; padding: 2rem; }
+  .overleaf-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.2rem;
+                  background: #4CAF50; color: white; border-radius: 8px; text-decoration: none;
+                  font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem; }
+</style>
+</head>
+<body>
+<div style="max-width:800px;margin:0 auto;">
+  <h1 id="page-title">Interview Practice</h1>
+  <p class="subtitle" id="page-subtitle">Loading your cheatsheet...</p>
+
+  <div class="timer" id="timer">02:00</div>
+  <div class="timer-controls">
+    <button class="timer-btn" onclick="startTimer()">Start</button>
+    <button class="timer-btn" onclick="pauseTimer()">Pause</button>
+    <button class="timer-btn" onclick="resetTimer()">Reset</button>
+    <select class="timer-btn" onchange="setTimerDuration(this.value)">
+      <option value="120">2 min</option>
+      <option value="180">3 min</option>
+      <option value="300">5 min</option>
+    </select>
+  </div>
+
+  <div class="progress"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+  <a id="overleaf-link" class="overleaf-btn" href="https://www.overleaf.com/latex/templates/jakes-resume/syzfjbzwjncs" target="_blank">
+    Open Cheatsheet in Overleaf
+  </a>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="showTab('technical')">Technical</button>
+    <button class="tab" onclick="showTab('behavioral')">Behavioral</button>
+    <button class="tab" onclick="showTab('cheatsheet')">Cheatsheet</button>
+    <button class="tab" onclick="showTab('ask')">Ask Interviewer</button>
+  </div>
+
+  <div id="technical-panel"></div>
+  <div id="behavioral-panel" style="display:none"></div>
+  <div id="cheatsheet-panel" style="display:none"></div>
+  <div id="ask-panel" style="display:none"></div>
+</div>
+
+<script>
+let data = null;
+let timerInterval = null;
+let timerSeconds = 120;
+let timerRunning = false;
+let answered = new Set();
+
+const params = new URLSearchParams(window.location.search);
+const session = params.get('session');
+
+async function loadSession() {
+  if (!session) { showError('No session ID. Generate a cheatsheet first via /interview-prep.'); return; }
+  try {
+    const res = await fetch(`/practice-data?session=${session}`);
+    if (!res.ok) throw new Error('Session not found');
+    data = await res.json();
+    render();
+  } catch(e) {
+    showError('Session expired or not found. Please generate a new cheatsheet.');
+  }
+}
+
+function showError(msg) {
+  document.getElementById('page-subtitle').textContent = msg;
+}
+
+function render() {
+  document.getElementById('page-title').textContent =
+    `Interview Prep — ${data.job_title || 'Role'}`;
+  document.getElementById('page-subtitle').textContent =
+    `${data.seniority || ''} · ${(data.technical_questions||[]).length + (data.behavioral_questions||[]).length} questions`;
+
+  renderTechnical();
+  renderBehavioral();
+  renderCheatsheet();
+  renderAsk();
+  updateProgress();
+}
+
+function renderTechnical() {
+  const qs = data.technical_questions || [];
+  const el = document.getElementById('technical-panel');
+  if (!qs.length) { el.innerHTML = '<p class="empty">No technical questions generated.</p>'; return; }
+  el.innerHTML = qs.map((q, i) => `
+    <div class="card" id="tq-${i}">
+      <div class="meta">
+        <span class="badge badge-topic">${q.topic || 'Technical'}</span>
+        <span class="badge badge-${q.difficulty || 'medium'}">${q.difficulty || 'medium'}</span>
+      </div>
+      <div class="question">${i+1}. ${q.question}</div>
+      <button class="reveal-btn" onclick="reveal('ta-${i}', 'tq-${i}')">Show ideal answer</button>
+      <div class="answer" id="ta-${i}">
+        <strong>Ideal answer:</strong><br>${q.ideal_answer || ''}
+        ${q.follow_up ? `<div class="hint">Follow-up: ${q.follow_up}</div>` : ''}
+        <div class="rating">
+          <span style="font-size:0.8rem;color:#64748b;margin-right:0.5rem;">Rate yourself:</span>
+          <button class="rate-btn rate-1" onclick="rate('t${i}',1,this)">Needs work</button>
+          <button class="rate-btn rate-2" onclick="rate('t${i}',2,this)">Ok</button>
+          <button class="rate-btn rate-3" onclick="rate('t${i}',3,this)">Nailed it</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderBehavioral() {
+  const qs = data.behavioral_questions || [];
+  const el = document.getElementById('behavioral-panel');
+  if (!qs.length) { el.innerHTML = '<p class="empty">No behavioral questions generated.</p>'; return; }
+  el.innerHTML = qs.map((q, i) => `
+    <div class="card">
+      <div class="meta">
+        <span class="badge badge-behavioral">${q.theme || 'Behavioral'}</span>
+      </div>
+      <div class="question">${i+1}. ${q.question}</div>
+      <div class="hint" style="margin-bottom:0.75rem;">STAR hint: ${q.star_hint || ''}</div>
+      <button class="reveal-btn" onclick="reveal('ba-${i}', null)">Show ideal answer</button>
+      <div class="answer" id="ba-${i}">
+        <strong>Ideal answer outline:</strong><br>${q.ideal_answer || ''}
+        <div class="rating">
+          <span style="font-size:0.8rem;color:#64748b;margin-right:0.5rem;">Rate yourself:</span>
+          <button class="rate-btn rate-1" onclick="rate('b${i}',1,this)">Needs work</button>
+          <button class="rate-btn rate-2" onclick="rate('b${i}',2,this)">Ok</button>
+          <button class="rate-btn rate-3" onclick="rate('b${i}',3,this)">Nailed it</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCheatsheet() {
+  const el = document.getElementById('cheatsheet-panel');
+  const tp = (data.talking_points || []).map(t => `<div class="talking-point">${t}</div>`).join('');
+  const rf = (data.red_flags_to_avoid || []).map(r => `<div class="red-flag">${r}</div>`).join('');
+  const cc = (data.company_culture || []).join(', ');
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">Company culture signals</div>
+      <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:1rem;">${cc || 'Not detected'}</p>
+      <div class="section-title">Talking points — emphasize these</div>
+      ${tp || '<p class="empty">None</p>'}
+      <div class="section-title" style="margin-top:1rem;">Red flags — avoid these</div>
+      ${rf || '<p class="empty">None</p>'}
+    </div>`;
+}
+
+function renderAsk() {
+  const qs = data.questions_to_ask_interviewer || [];
+  const el = document.getElementById('ask-panel');
+  el.innerHTML = `<div class="card">
+    <div class="section-title">Questions to ask your interviewer</div>
+    ${qs.map(q => `<div class="ask-q">${q}</div>`).join('') || '<p class="empty">None generated.</p>'}
+  </div>`;
+}
+
+function showTab(name) {
+  ['technical','behavioral','cheatsheet','ask'].forEach(t => {
+    document.getElementById(t+'-panel').style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((btn, i) => {
+    btn.classList.toggle('active', ['technical','behavioral','cheatsheet','ask'][i] === name);
+  });
+}
+
+function reveal(answerId, cardId) {
+  const el = document.getElementById(answerId);
+  el.classList.toggle('show');
+  if (cardId) { answered.add(cardId); updateProgress(); }
+}
+
+function rate(id, score, btn) {
+  document.querySelectorAll(`[onclick^="rate('${id}'"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function updateProgress() {
+  const total = (data?.technical_questions?.length || 0) + (data?.behavioral_questions?.length || 0);
+  const pct = total ? (answered.size / total * 100) : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function formatTime(s) {
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  timerInterval = setInterval(() => {
+    if (timerSeconds <= 0) { clearInterval(timerInterval); timerRunning = false; return; }
+    timerSeconds--;
+    document.getElementById('timer').textContent = formatTime(timerSeconds);
+  }, 1000);
+}
+function pauseTimer() { clearInterval(timerInterval); timerRunning = false; }
+function resetTimer() {
+  pauseTimer();
+  timerSeconds = 120;
+  document.getElementById('timer').textContent = formatTime(timerSeconds);
+}
+function setTimerDuration(v) {
+  pauseTimer();
+  timerSeconds = parseInt(v);
+  document.getElementById('timer').textContent = formatTime(timerSeconds);
+}
+
+loadSession();
+</script>
+</body>
+</html>
